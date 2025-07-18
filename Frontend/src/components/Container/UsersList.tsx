@@ -61,7 +61,7 @@ const UsersList = () => {
     }
     return (
         <>
-            <main className="flex justify-center items-start pt-28 px-4">
+            <main className="flex justify-center items-start pt-28 px-4 py-5">
                 <div className="w-full max-w-2xl bg-gray-800/80 rounded-xl shadow-xl p-6 backdrop-blur-md">
 
                     <input

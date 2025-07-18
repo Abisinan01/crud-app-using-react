@@ -12,7 +12,7 @@ export const CreateUser = async (req: Request, res: Response) => {
             username,
             email,
             password,
-            role:'User'
+            role:'user'
         })
         await newUser.save()
         console.log('new user', newUser)
