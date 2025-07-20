@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { FaUser } from 'react-icons/fa';
 import { useDispatch } from 'react-redux';
@@ -7,21 +7,28 @@ import EditUsers from '../Modal/EditUsers';
 import { useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../../redux/store';
 import { setUsers } from '../../redux/adminUsersSlice';
+import Pagination from '../pagination.tsx/Pagination';
 const localUrl = import.meta.env.VITE_API_URL
 
 const UsersList = () => {
-    const [searchTerm, setSearchTerm] = useState('');
-    const [showEditModal, setShowEditModal] = useState(false)
-    const [editState, setEditState] = useState("")
+    const [searchTerm, setSearchTerm] = useState<string>('');
+    const [showEditModal, setShowEditModal] = useState<boolean>(false)
+    const [editState, setEditState] = useState<string>("")
     const dispatch = useDispatch<AppDispatch>()
     const { usersList } = useSelector((state: RootState) => state.adminUsers)
     //MODAL
     const openEditModal = () => setShowEditModal(true)
     const closeEditModal = () => setShowEditModal(false)
 
-    const fetchUsers = () => {
+    // Pagination
+    const [currentPage, setCurrentPage] = useState(0)
+    const PAGE_SIZE = 4
+    const start = currentPage * PAGE_SIZE
+    const end = start + PAGE_SIZE
+
+    const fetchUsers = useCallback(() => {
         axios
-            .get(`${localUrl}/admin/fetch-data`, { withCredentials: true })
+            .get(`${localUrl}/admin/fetch-data?page=${currentPage}&limit=${PAGE_SIZE}&search=${searchTerm}`, { withCredentials: true })
             .then((res) => {
                 console.log('Fetch data : ', res.data.user)
                 dispatch(setUsers(res.data.users))
@@ -30,13 +37,12 @@ const UsersList = () => {
                 console.error('Fetch users error', err);
                 toast.error('Failed to load users');
             });
-    };
+    }, [currentPage, searchTerm]);
 
-    useEffect(fetchUsers, []);
+    useEffect(fetchUsers, [fetchUsers]);
 
     const handleDelete = (userId: string) => {
         if (!window.confirm('Delete this user?')) return;
-
         axios
             .delete(`${localUrl}/admin/delete/${userId}`, { withCredentials: true })
             .then(() => {
@@ -59,6 +65,16 @@ const UsersList = () => {
         openEditModal()
         setEditState(userId)
     }
+
+    const totalUsers = usersList.length
+    const noOfPages = Math.ceil(totalUsers / PAGE_SIZE)
+    const goToNextPage = () => {
+        setCurrentPage(prev => prev + 1)
+    }
+    const goToPreviousPage = () => {
+        setCurrentPage(prev => prev - 1)
+    }
+
     return (
         <>
             <main className="flex justify-center items-start pt-28 px-4 py-5">
@@ -75,7 +91,7 @@ const UsersList = () => {
                     <h3 className="text-lg font-semibold mb-2">All Users</h3>
                     <div className="space-y-3 max-h-[420px] overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-gray-900">
                         {filteredUsers.length ? (
-                            filteredUsers.map((u) => (
+                            filteredUsers.slice(start, end).map((u) => (
                                 <div
                                     key={u._id}
                                     className="flex items-center bg-gray-700/60 p-3 rounded-lg shadow-md"
@@ -119,6 +135,15 @@ const UsersList = () => {
                             <p className="text-gray-400 text-sm">No users found.</p>
                         )}
                     </div>
+
+                    {/* pagination */}
+                    {filteredUsers.length &&
+                        <Pagination
+                            noOfPages={noOfPages}
+                            goToNextPage={goToNextPage}
+                            goToPreviousPage={goToPreviousPage}
+                            currentPage={currentPage}
+                        />}
                 </div>
             </main>
 

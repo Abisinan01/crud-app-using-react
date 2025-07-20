@@ -3,8 +3,13 @@ import User from "../../Model/UserSchema";
 
 export const FetchUserData = async (req: Request, res: Response) => {
     try {
-        console.log("Req fetchuser")
-        const allUsers = await User.find({ role: "user" });
+        console.log("Req fetchuser", req.query)
+        let { limit, page, search } = req.query
+        
+        const allUsers = await User.find({ role: "user" })
+            // .skip(page * limit)
+            // .limit(limit)
+ 
         console.log("All Users ", allUsers)
         res.json({ users: allUsers, success: true })
     } catch (error) {
