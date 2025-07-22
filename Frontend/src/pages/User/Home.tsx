@@ -7,7 +7,6 @@ import Footer from '../../components/Footer/Footer';
 
 const Home = () => {
   const { user } = useSelector((state: RootState) => state.auth)
-  console.log(user?.username, "Usersdata")
 
   return (
     <div className="bg-gradient-to-br from-gray-900 via-purple-900 to-black min-h-screen text-white flex flex-col items-center justify-between">

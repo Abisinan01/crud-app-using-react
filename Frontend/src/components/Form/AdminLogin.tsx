@@ -51,7 +51,7 @@ const LoginForm = () => {
             await validationSchema.validate(formData, { abortEarly: false });
             console.log("Submitted data:", formData);
             await dispatch(loginUser(formData))
-            navigate('/admin/dashboard')
+            navigate('/admin/dashboard',{replace:true})
             setFormData({
                 username: "",
                 email: "",
@@ -79,7 +79,7 @@ const LoginForm = () => {
                 <form className="flex flex-col items-center w-full space-y-4" onSubmit={handleSubmit}>
                     <input
                         type="text"
-                        placeholder="Email or username"
+                        placeholder="Enter your username"
                         name="username"
                         value={formData.username || formData.email}
                         onChange={handleChange}

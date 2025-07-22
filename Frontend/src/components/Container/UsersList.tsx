@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState, type ChangeEvent } from 'react';
 import { toast } from 'react-toastify';
 import { FaUser } from 'react-icons/fa';
 import { useDispatch } from 'react-redux';
@@ -16,22 +16,24 @@ const UsersList = () => {
     const [editState, setEditState] = useState<string>("")
     const dispatch = useDispatch<AppDispatch>()
     const { usersList } = useSelector((state: RootState) => state.adminUsers)
+    const [pages, setPages] = useState(0)
     //MODAL
     const openEditModal = () => setShowEditModal(true)
     const closeEditModal = () => setShowEditModal(false)
 
     // Pagination
-    const [currentPage, setCurrentPage] = useState(0)
+    const [currentPage, setCurrentPage] = useState(1)
     const PAGE_SIZE = 4
-    const start = currentPage * PAGE_SIZE
-    const end = start + PAGE_SIZE
 
     const fetchUsers = useCallback(() => {
         axios
             .get(`${localUrl}/admin/fetch-data?page=${currentPage}&limit=${PAGE_SIZE}&search=${searchTerm}`, { withCredentials: true })
             .then((res) => {
-                console.log('Fetch data : ', res.data.user)
-                dispatch(setUsers(res.data.users))
+                if (!res.data.success) {
+                    toast.error(res.data.message)
+                }
+                dispatch(setUsers(res.data.users ?? []))
+                setPages(res.data.totalUsers)
             })
             .catch((err) => {
                 console.error('Fetch users error', err);
@@ -55,23 +57,23 @@ const UsersList = () => {
             });
     };
 
-    const filteredUsers = usersList.filter((u) =>
+    const filteredUsers = usersList?.filter((u) =>
         u.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
         u.email.toLowerCase().includes(searchTerm.toLowerCase())
     );
-
 
     const handleEdit = (userId: string) => {
         openEditModal()
         setEditState(userId)
     }
 
-    const totalUsers = usersList.length
+    const totalUsers = pages
     const noOfPages = Math.ceil(totalUsers / PAGE_SIZE)
     const goToNextPage = () => {
         setCurrentPage(prev => prev + 1)
     }
     const goToPreviousPage = () => {
+        if(pages <= 1) return
         setCurrentPage(prev => prev - 1)
     }
 
@@ -91,7 +93,7 @@ const UsersList = () => {
                     <h3 className="text-lg font-semibold mb-2">All Users</h3>
                     <div className="space-y-3 max-h-[420px] overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-gray-900">
                         {filteredUsers.length ? (
-                            filteredUsers.slice(start, end).map((u) => (
+                            filteredUsers.map((u) => (
                                 <div
                                     key={u._id}
                                     className="flex items-center bg-gray-700/60 p-3 rounded-lg shadow-md"
