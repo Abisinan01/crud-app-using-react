@@ -7,6 +7,7 @@ interface IUser extends Document {
     role?: string;
     profile: string;
     PhoneNumber: string;
+    isRemoved: boolean;
 }
 
 const UserSchema: Schema<IUser> = new Schema<IUser>({
@@ -20,10 +21,11 @@ const UserSchema: Schema<IUser> = new Schema<IUser>({
         required: true,
         index: { unique: true }
     },
-    PhoneNumber:{type:String},
+    PhoneNumber: { type: String },
     password: String,
     role: { type: String, default: "user" },
-    profile:{type:String}
+    profile: { type: String },
+    isRemoved: {type:Boolean , default:false}
 });
 
 const User = model<IUser>('Users', UserSchema)

@@ -1,6 +1,5 @@
 import { Outlet, Navigate } from "react-router-dom";
 import { useAdminAuth } from "../hooks/useAdminAuth";
-import FullScreenLoader from "../components/ScreenLoading";
 
 export const AdminProtectedRoutes = () => {
     const { token, role, loading } = useAdminAuth()

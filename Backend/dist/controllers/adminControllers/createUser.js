@@ -7,7 +7,7 @@ export const CreateUser = async (req, res) => {
             username,
             email,
             password,
-            role: 'User'
+            role: 'user'
         });
         await newUser.save();
         console.log('new user', newUser);

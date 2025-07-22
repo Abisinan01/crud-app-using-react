@@ -15,8 +15,8 @@ export const isAuthenticated = async (req: Request, res: Response) => {
 
         const docode = jwt.verify(token, secret, (err: any, decoded: any) => {
             console.log(decoded)
-            if (decoded?.role == 'user') {
-                res.json({ token, success: true, role: 'user' })
+            if (decoded?.role == 'user' && !decoded?.isRemoved) {
+                res.json({ token, success: true, role: 'user', isRemoved: false })
             } else if (decoded?.role == 'admin') {
                 return res.json({ token, success: true, role: 'admin' })
             } else {

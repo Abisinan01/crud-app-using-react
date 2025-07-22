@@ -13,7 +13,8 @@ const UserSchema = new Schema({
     PhoneNumber: { type: String },
     password: String,
     role: { type: String, default: "user" },
-    profile: { type: String }
+    profile: { type: String },
+    isRemoved: false
 });
 const User = model('Users', UserSchema);
 export default User;

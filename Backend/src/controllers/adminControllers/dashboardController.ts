@@ -6,10 +6,10 @@ export const FetchUserData = async (req: Request, res: Response) => {
         console.log("Req fetchuser", req.query)
         const limit = Number(req.query.limit) || 4;
         const page = Number(req.query.page) || 1;
-        const search = String(req.query.search || "");
+        // const search = String(req.query.search || "");
 
         const allUsers = await User.aggregate([
-            { $match: { role: "user" } }, {
+            { $match: { role: "user", isRemoved: false } }, {
                 $project: {
                     _id: 1,
                     username: 1,
@@ -42,11 +42,15 @@ export const FetchUserData = async (req: Request, res: Response) => {
     }
 }
 
+
 export const Delete = async (req: Request, res: Response) => {
     try {
         console.log("id ", req.params.id)
         const id = req.params.id
-        await User.findByIdAndDelete(id)
+        await User.findByIdAndUpdate(
+            id,
+            { $set: { isRemoved: true } }
+        )
         res.status(200).json({ message: "User deleted", success: true })
     } catch (error) {
         console.log("Deletion failed: ", error)

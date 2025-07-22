@@ -2,7 +2,6 @@ import { Request, Response } from "express";
 import { UserDetails } from "../../interfaces/UserDatas";
 import { isAlreadyExists } from "../../utils/checkAlreadyExist";
 import { SignWithJwt } from "../../utils/signWithJwt";
-import jwt, { decode } from "jsonwebtoken";
 import dotenv from 'dotenv'
 import comparePasswords from "../../utils/comparePassword";
 dotenv.config()
@@ -34,7 +33,7 @@ export const LoginForm = async (req: Request, res: Response): Promise<void> => {
             })
         }
 
-        const token = await SignWithJwt(username, isExists.user?.id, isExists?.user?.role || "User")
+        const token = await SignWithJwt(username, isExists.user?.id, isExists?.user?.role || "user", isExists.user.isRemoved)
         console.log("jwt :", token);
 
         res.cookie('jwt', token, {

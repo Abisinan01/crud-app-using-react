@@ -82,7 +82,7 @@ const ProfileCard = () => {
 
         axios
             .post(`${localUrl}/profile`, updatedUser, {
-                withCredentials: true,
+                withCredentials: true
             })
             .then((res) => {
                 if (res.status !== 200) {
@@ -180,7 +180,7 @@ const ProfileCard = () => {
                         {isLoading ? 'Saving...' : 'Save Changes'}
                     </button>
                     <button
-                        onClick={()=>navigate('/')}
+                        onClick={() => navigate('/')}
                         className="bg-gray-600 text-white px-6 py-2 rounded-lg hover:bg-gray-700 transition duration-200"
                     >
                         Cancel

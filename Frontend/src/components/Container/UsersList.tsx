@@ -69,11 +69,13 @@ const UsersList = () => {
 
     const totalUsers = pages
     const noOfPages = Math.ceil(totalUsers / PAGE_SIZE)
+    console.log('noOfpages :', noOfPages, 'currentpage', currentPage)
     const goToNextPage = () => {
-        setCurrentPage(prev => prev + 1)
+        setCurrentPage(prev =>
+            prev + 1 < noOfPages ? prev + 1 : prev
+        )
     }
     const goToPreviousPage = () => {
-        if(pages <= 1) return
         setCurrentPage(prev => prev - 1)
     }
 
@@ -139,13 +141,13 @@ const UsersList = () => {
                     </div>
 
                     {/* pagination */}
-                    {filteredUsers.length &&
+                    {filteredUsers.length > 0 ?
                         <Pagination
                             noOfPages={noOfPages}
                             goToNextPage={goToNextPage}
                             goToPreviousPage={goToPreviousPage}
                             currentPage={currentPage}
-                        />}
+                        /> : ""}
                 </div>
             </main>
 

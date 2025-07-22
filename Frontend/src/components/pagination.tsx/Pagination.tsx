@@ -31,7 +31,7 @@ const Pagination = ({
             <button
                 onClick={goToNextPage}
                 className="p-2 px-4 bg-gray-800 text-white rounded-lg hover:bg-gray-700 transition"
-                disabled={currentPage == noOfPages}
+                disabled={currentPage  == noOfPages}
             >
                 <IoIosArrowForward />
             </button>

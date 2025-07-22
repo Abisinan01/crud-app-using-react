@@ -7,8 +7,6 @@ export const LoginForm = async (req, res) => {
     try {
         const { username, email, password, role } = req.body.formData;
         console.log("password ", password, "role :", role); //DEBUG
-        if (role === 'admin') {
-        }
         const isExists = await isAlreadyExists({ username, email, role });
         if (!isExists.user) {
             res.json({ message: "Invalid credentials", success: false });

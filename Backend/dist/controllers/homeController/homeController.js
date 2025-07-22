@@ -1,7 +1,16 @@
 import User from "../../Model/UserSchema";
 export const Home = async (req, res) => {
     try {
-        const userData = await User.findById(req.user.id);
+        const userData = await User.aggregate([
+            { $match: { _id: req.user.id } }, {
+                $project: {
+                    _id: 1,
+                    username: 1,
+                    email: 1,
+                    profile: 1
+                }
+            }
+        ]);
         res.status(200).json({ message: "Fetcing done", success: true, user: userData });
     }
     catch (error) {
