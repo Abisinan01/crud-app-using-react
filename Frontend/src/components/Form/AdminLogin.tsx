@@ -2,11 +2,11 @@ import React, { useState } from 'react'
 import { FcGoogle } from "react-icons/fc";
 import type { FormData } from '../../interfaces/formDatas';
 import { useNavigate } from 'react-router-dom';
-import * as Yup from 'yup';
 import { toast } from 'react-toastify';
 import { useDispatch } from 'react-redux';
 import { loginUser } from '../../redux/middlewares/loginMiddleware';
 import type { AppDispatch } from '../../redux/store';
+import { validationSchemaLogin } from '../../utils/formValidation';
 
 const LoginForm = () => {
     const [formData, setFormData] = useState<Omit<FormData, "confirmPassword">>({
@@ -18,19 +18,7 @@ const LoginForm = () => {
     const [errors, setErrors] = useState<Record<string, string>>({});
     const navigate = useNavigate()
     const dispatch = useDispatch<AppDispatch>()
-    const passwordRegex =
-        /[A-Za-z\d@$!%*?&]{6,}/;
 
-    const validationSchema = Yup.object().shape({
-        username: Yup.string().required("Please enter valid username or emailId"),
-        password: Yup.string()
-            .required("Password is required")
-            .min(8, "Password must be at least 8 characters")
-            .matches(
-                passwordRegex,
-                "Password must contain at least one digit, one uppercase, one lowercase and one symbol"
-            )
-    });
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -48,7 +36,7 @@ const LoginForm = () => {
 
         e.preventDefault();
         try {
-            await validationSchema.validate(formData, { abortEarly: false });
+            await validationSchemaLogin.validate(formData, { abortEarly: false });
             console.log("Submitted data:", formData);
             await dispatch(loginUser(formData))
             navigate('/admin/dashboard',{replace:true})
